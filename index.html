@@ -90,7 +90,6 @@ body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:1
 .btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
 .btn.ghost:hover{border-color:var(--field)}
 .rounds{margin:0;font-family:var(--mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.privacy-note{margin:0;max-width:560px;color:var(--muted);font-size:.88rem;line-height:1.55}
 .timer-note{margin:0;color:var(--field);font-size:.98rem;font-weight:600;line-height:1.5}
 .stats{display:flex;flex-wrap:wrap;gap:10px}
 .stat{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:1rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -229,7 +228,6 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
         <button type="button" class="btn ghost" id="fsBtn" hidden>Full screen</button>
       </div>
     </form>
-    <p class="privacy-note" id="privacyNote" hidden data-i18n="privacy">Your name stays on your device. We record anonymous results (score, answers and language) for event statistics.</p>
     <p class="rounds" id="rounds" hidden></p>
   </section>
 
@@ -317,7 +315,6 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       inDesc: 'Things that are safe in the MRI room',
       outSub: 'Stays outside the room', tellSub: 'The team checks it first', inSub: 'Safe in the room',
       nameLabel: 'Your name for the certificate', namePh: 'Write your name', nameError: 'Please write your name to start.',
-      privacy: 'Your name stays on your device. We record anonymous results (score, time, answers and language) for event statistics and the player ranking.',
       timerNote: 'The clock only runs while you choose. Reading the answers is not timed.',
       timeLabel: 'Time', rankLine: 'Your rank is {r}/{n}', rankPending: 'Working out your rank…',
       start: 'Start the game', fs: 'Full screen', fsExit: 'Exit full screen',
@@ -355,7 +352,6 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       inDesc: 'أشياء آمنة داخل غرفة الرنين المغناطيسي',
       outSub: 'يبقى خارج الغرفة', tellSub: 'يتحقق منه الفريق أولًا', inSub: 'آمن داخل الغرفة',
       nameLabel: 'اسمك كما سيظهر في الشهادة', namePh: 'اكتب اسمك', nameError: 'فضلًا اكتب اسمك للبدء.',
-      privacy: 'يبقى اسمك على جهازك فقط. نسجّل النتائج دون أي بيانات شخصية (الدرجة والوقت والإجابات واللغة) لأغراض إحصائية ولترتيب المشاركين.',
       timerNote: 'يعمل المؤقت أثناء اختيارك للإجابة فقط، ولا يُحتسب وقت قراءة الشرح.',
       timeLabel: 'الوقت', rankLine: 'ترتيبك {r}/{n}', rankPending: 'جارٍ حساب ترتيبك…',
       start: 'ابدأ اللعبة', fs: 'ملء الشاشة', fsExit: 'الخروج من ملء الشاشة',
@@ -1204,7 +1200,6 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       if (typeof state.name !== 'string') state.name = '';
       $('playerName').value = state.name;
     }
-    $('privacyNote').hidden = !RECORDING;
     show(state.screen);
     applyLang();
   }
