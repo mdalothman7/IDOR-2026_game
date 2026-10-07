@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="MRI safety game for the International Day of Radiology 2026, Medical Imaging, King Abdullah Specialized Hospital.">
+<title>MRI Safe or Not Safe</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&amp;family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=Noto+Kufi+Arabic:wght@500..900&amp;display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: one-screen booth kiosk for public visitors, English or Arabic. Status bar, name entry, a scanner-bore stage holding the item, three answer bins, and a named certificate at the end; stacks on phones. Deliberately single dark theme to match the campaign's navy "field" identity. */
+:root{
+  color-scheme: dark;
+  --ink:#0A1A33;
+  --deep:#06122A;
+  --panel:#11264A;
+  --line:#2A4A75;
+  --text:#EAF2FB;
+  --muted:#A9BCD6;
+  --field:#4FD1E8;
+  --field-faint:rgba(79,209,232,.16);
+  --field-glow:rgba(79,209,232,.45);
+  --amber:#F5B312;
+  --amber-hi:#FFC53A;
+  --out:#F26B5E;
+  --tell:#F5B312;
+  --in:#4CCB8F;
+  --out-glow:rgba(242,107,94,.45);
+  --in-glow:rgba(76,203,143,.45);
+  --on-bright:#0A1A33;
+  --display:'Archivo','Arial Narrow',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html[lang="ar"]{
+  --display:'Noto Kufi Arabic','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --body:'IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Sans Arabic',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.4}
+:focus-visible{outline:3px solid var(--field);outline-offset:3px}
+[tabindex="-1"]:focus{outline:none}
+
+.app{min-height:100%;display:flex;flex-direction:column;gap:clamp(16px,3vh,28px);max-width:940px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px);padding-block:clamp(14px,2.6vh,24px)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.bar-end{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:.06em;color:var(--field);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--field);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--field-glow)}50%{box-shadow:0 0 0 6px transparent}}
+.lang-btn{font-family:'IBM Plex Sans Arabic','IBM Plex Sans',system-ui,sans-serif;font-size:.95rem;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:40px;cursor:pointer}
+.lang-btn:hover{border-color:var(--field)}
+
+.screen{flex:1;display:flex;flex-direction:column;gap:clamp(18px,3vh,30px)}
+.eyebrow{margin:0;font-size:.8rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--field)}
+.title{margin:0;font-family:var(--display);font-stretch:70%;font-weight:900;font-size:clamp(3.4rem,12vw,7.2rem);line-height:.86;text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance}
+.title .accent{color:var(--amber)}
+.lede{margin:0;max-width:36em;font-size:clamp(1.05rem,2.3vw,1.28rem);line-height:1.6;color:var(--muted)}
+.start-hero{display:flex;flex-direction:column;gap:14px}
+
+.legend{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.legend li{display:flex;gap:14px;align-items:flex-start;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.legend li div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.legend strong{font-size:1.1rem}
+.legend .desc{color:var(--muted);font-size:.95rem;line-height:1.45}
+
+.shape{flex:none;width:32px;height:32px;display:block}
+.s-out{stroke:var(--out)}
+.s-out-fill{fill:var(--out)}
+.s-tell{fill:var(--tell)}
+.s-in{fill:var(--in)}
+.s-mark{stroke:var(--on-bright)}
+
+.start-form{display:flex;flex-direction:column;gap:16px}
+.name-field{display:flex;flex-direction:column;gap:8px;max-width:560px}
+.name-field label{font-weight:600;font-size:1.05rem}
+.name-field input{font:inherit;font-size:1.2rem;padding:12px 16px;min-height:56px;border-radius:12px;border:2px solid var(--line);background:var(--deep);color:var(--text);width:100%}
+.name-field input::placeholder{color:var(--muted);opacity:.8}
+.name-field input:focus-visible{outline:none;border-color:var(--field)}
+.name-field input[aria-invalid="true"]{border-color:var(--out)}
+.field-error{margin:0;color:var(--out);font-weight:600}
+
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:1.15rem;border-radius:12px;padding:14px 28px;min-height:56px;cursor:pointer;border:2px solid transparent;transition:background .15s,border-color .15s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--amber);color:var(--on-bright)}
+.btn.primary:hover{background:var(--amber-hi)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--field)}
+.rounds{margin:0;font-family:var(--mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Play */
+.hud{display:flex;flex-direction:column;gap:10px}
+.dots{display:grid;gap:6px}
+.dots i{height:8px;border-radius:4px;background:var(--line)}
+.dots i.cur{background:var(--text)}
+.dots i.ok{background:var(--in)}
+.dots i.miss{background:var(--out)}
+.hud-text{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.hud-text b{color:var(--text)}
+
+.stage{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.bore-wrap{position:relative;display:grid;place-items:center;padding:clamp(18px,5vw,36px);max-width:100%}
+.bore-wrap::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle at center,transparent 0 13px,var(--field-faint) 13px 14px);-webkit-mask:radial-gradient(circle,transparent 40%,#000 52%,transparent 71%);mask:radial-gradient(circle,transparent 40%,#000 52%,transparent 71%);pointer-events:none}
+.bore{position:relative;width:min(230px,54vw);aspect-ratio:1;max-width:100%;border-radius:50%;border:clamp(12px,3vw,20px) solid var(--panel);box-shadow:0 0 0 2px var(--line),inset 0 0 0 2px var(--line);background:var(--deep);display:grid;place-items:center;transition:box-shadow .3s}
+.bore.glow-ok{box-shadow:0 0 0 2px var(--in),0 0 0 10px var(--in-glow),inset 0 0 0 2px var(--line)}
+.bore.glow-miss{box-shadow:0 0 0 2px var(--out),0 0 0 10px var(--out-glow),inset 0 0 0 2px var(--line)}
+.bore.shake{box-shadow:0 0 0 2px var(--out),0 0 0 10px var(--out-glow),inset 0 0 0 2px var(--line);animation:shake .4s .5s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.item-icon{width:58%;aspect-ratio:1;color:var(--text)}
+.item-icon svg{width:100%;height:100%;display:block}
+.item-icon.enter{animation:enter .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes enter{from{opacity:0;transform:translateY(-16px) scale(.9)}to{opacity:1;transform:none}}
+.item-icon.yank{animation:yank .55s cubic-bezier(.7,0,.9,.4) forwards}
+@keyframes yank{0%{transform:none}18%{transform:translateX(-5px) rotate(-8deg)}100%{transform:scale(.1) rotate(220deg);opacity:.15}}
+.item-name{margin:0;font-family:var(--display);font-stretch:85%;font-weight:800;font-size:clamp(1.55rem,4.4vw,2.3rem);line-height:1.12;text-wrap:balance;max-width:24ch}
+.ask{margin:0;color:var(--muted);font-size:1.05rem}
+
+.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.choice{font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:128px;padding:16px;border-radius:16px;border:2px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;text-align:center;transition:transform .12s,border-color .12s}
+.choice:hover{border-color:var(--field)}
+.choice:active{transform:scale(.98)}
+.choice .shape{width:42px;height:42px}
+.choice div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.choice strong{font-size:1.2rem}
+.choice small{font-size:.86rem;color:var(--muted)}
+
+.feedback{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:16px;background:var(--panel);border:2px solid var(--line)}
+.feedback.good{border-color:var(--in)}
+.feedback.bad{border-color:var(--out)}
+.verdict{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1.35rem,3.4vw,1.85rem);line-height:1.2}
+.vicon{flex:none;width:34px;height:34px}
+.answer{display:flex;align-items:center;gap:10px;margin:0;font-weight:600;font-size:1.05rem}
+.answer .shape{width:26px;height:26px}
+.why{margin:0;color:var(--muted);font-size:1.08rem;line-height:1.6;max-width:60ch}
+.feedback .btn{align-self:flex-start}
+
+/* End */
+.final{display:flex;align-items:baseline;gap:10px;font-family:'Archivo','Arial Narrow',system-ui,sans-serif;font-stretch:70%;font-weight:900;font-variant-numeric:tabular-nums}
+.final .big{font-size:clamp(5rem,19vw,8.5rem);line-height:.85;color:var(--amber)}
+.final .of{font-size:clamp(1.8rem,5vw,2.6rem);color:var(--muted)}
+.rank{margin:0;font-family:var(--display);font-stretch:80%;font-weight:800;font-size:clamp(2rem,6vw,3rem);text-transform:uppercase;line-height:1.05;text-wrap:balance}
+.result-head{display:flex;flex-direction:column;gap:12px}
+.sub-head{margin:0;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cert-block{display:flex;flex-direction:column;gap:12px}
+.cert-img{display:block;width:100%;max-width:100%;aspect-ratio:1600/1131;height:auto;border-radius:10px;background:var(--panel);box-shadow:0 0 0 1px var(--line);-webkit-touch-callout:default}
+.cert-hint{margin:0;color:var(--muted);font-size:.98rem;line-height:1.5}
+.save-status{margin:0;font-weight:600;color:var(--field)}
+.save-status:empty{display:none}
+.misses{display:flex;flex-direction:column;gap:10px}
+.misses ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.misses li{display:flex;justify-content:space-between;align-items:center;gap:8px 14px;flex-wrap:wrap;padding:12px 14px;background:var(--panel);border-radius:10px}
+.misses li > span:first-child{min-width:0;flex:1 1 220px}
+.miss-ans{display:inline-flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap}
+.miss-ans .shape{width:22px;height:22px}
+.idle{margin:0;color:var(--muted);font-size:.85rem;font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.foot{display:flex;justify-content:space-between;gap:6px 16px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+
+/* Arabic adjustments: no letter-spacing (it breaks joined script), roomier line heights */
+html[lang="ar"] .brand,html[lang="ar"] .eyebrow,html[lang="ar"] .sub-head,html[lang="ar"] .status{letter-spacing:0}
+html[lang="ar"] .brand,html[lang="ar"] .eyebrow,html[lang="ar"] .sub-head{font-size:.9rem}
+html[lang="ar"] .title{font-weight:800;font-size:clamp(2.8rem,10vw,5.4rem);line-height:1.25}
+html[lang="ar"] .item-name,html[lang="ar"] .rank{line-height:1.45}
+html[lang="ar"] .verdict{line-height:1.5}
+html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
+
+@media (max-width:720px){
+  .legend{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .choices{grid-template-columns:1fr}
+  .choice{flex-direction:row;justify-content:flex-start;text-align:start;min-height:72px;padding:12px 16px;gap:14px}
+  .choice .shape{width:36px;height:36px}
+  .actions .btn{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <span class="brand" data-i18n="brand">IDoR 2026 · Respect the Field</span>
+    <div class="bar-end">
+      <span class="status"><span class="dot" aria-hidden="true"></span><span data-i18n="status">MAGNET ON · 24/7</span></span>
+      <button type="button" class="lang-btn" id="langBtn" lang="ar">العربية</button>
+    </div>
+  </header>
+
+  <section class="screen" id="start" aria-labelledby="start-title">
+    <div class="start-hero">
+      <p class="eyebrow" data-i18n="eyebrow">MRI safety game</p>
+      <h1 id="start-title" class="title"><span id="titleA">Safe or</span><br><span id="titleB" class="accent">Not Safe?</span></h1>
+      <p class="lede" data-i18n="lede">Imagine you are going into the MRI room for a scan, or to stay with a family member. What can come in with you? Sort 10 things into the right group.</p>
+    </div>
+    <ul class="legend">
+      <li>
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><circle class="s-out" cx="12" cy="12" r="9" fill="none" stroke-width="3"></circle><path class="s-out" d="M5.6 18.4 18.4 5.6" stroke-width="3"></path></svg>
+        <div><strong data-i18n="out">Leave it out</strong><span class="desc" data-i18n="outDesc">Things you carry or wear that must stay outside</span></div>
+      </li>
+      <li>
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><path class="s-tell" d="M12 2.5 22.5 20.5H1.5z"></path><path class="s-mark" d="M12 9v5.2M12 17.4v.1" fill="none" stroke-width="2.4" stroke-linecap="round"></path></svg>
+        <div><strong data-i18n="tell">Tell the staff</strong><span class="desc" data-i18n="tellDesc">Things in or on your body that the team must know about</span></div>
+      </li>
+      <li>
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><rect class="s-in" x="2.5" y="2.5" width="19" height="19" rx="2.5"></rect><path class="s-mark" d="M7.5 12.5l3 3 6-7" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div><strong data-i18n="in">OK to go in</strong><span class="desc" data-i18n="inDesc">Things that are safe in the MRI room</span></div>
+      </li>
+    </ul>
+    <form class="start-form" id="startForm" novalidate>
+      <div class="name-field">
+        <label for="playerName" data-i18n="nameLabel">Your name for the certificate</label>
+        <input id="playerName" name="playerName" type="text" maxlength="40" autocomplete="off" enterkeyhint="go" data-i18n-ph="namePh" placeholder="Write your name" aria-describedby="nameError">
+        <p class="field-error" id="nameError" hidden data-i18n="nameError">Please write your name to start.</p>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn primary" id="startBtn" data-i18n="start">Start the game</button>
+        <button type="button" class="btn ghost" id="fsBtn" hidden>Full screen</button>
+      </div>
+    </form>
+    <p class="rounds" id="rounds" hidden></p>
+  </section>
+
+  <section class="screen" id="play" hidden aria-labelledby="itemName">
+    <div class="hud">
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <div class="hud-text"><span id="countText">Item 1 of 10</span><span><span data-i18n="score">Score</span> <b id="scoreText">0</b></span></div>
+    </div>
+    <div class="stage">
+      <div class="bore-wrap" aria-hidden="true"><div class="bore" id="bore"><div class="item-icon" id="itemIcon"></div></div></div>
+      <h2 class="item-name" id="itemName" tabindex="-1">Your keys</h2>
+      <p class="ask" id="ask" data-i18n="ask">Where does it go?</p>
+    </div>
+    <div class="choices" id="choices" role="group" data-i18n-aria="choose" aria-label="Choose where it goes">
+      <button type="button" class="choice" data-pick="out">
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><circle class="s-out" cx="12" cy="12" r="9" fill="none" stroke-width="3"></circle><path class="s-out" d="M5.6 18.4 18.4 5.6" stroke-width="3"></path></svg>
+        <div><strong data-i18n="out">Leave it out</strong><small data-i18n="outSub">Stays outside the room</small></div>
+      </button>
+      <button type="button" class="choice" data-pick="tell">
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><path class="s-tell" d="M12 2.5 22.5 20.5H1.5z"></path><path class="s-mark" d="M12 9v5.2M12 17.4v.1" fill="none" stroke-width="2.4" stroke-linecap="round"></path></svg>
+        <div><strong data-i18n="tell">Tell the staff</strong><small data-i18n="tellSub">The team checks it first</small></div>
+      </button>
+      <button type="button" class="choice" data-pick="in">
+        <svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><rect class="s-in" x="2.5" y="2.5" width="19" height="19" rx="2.5"></rect><path class="s-mark" d="M7.5 12.5l3 3 6-7" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div><strong data-i18n="in">OK to go in</strong><small data-i18n="inSub">Safe in the room</small></div>
+      </button>
+    </div>
+    <div class="feedback" id="feedback" hidden aria-live="polite">
+      <div class="verdict" id="verdict"></div>
+      <p class="answer" id="answerLine"></p>
+      <p class="why" id="why"></p>
+      <button type="button" class="btn primary" id="nextBtn">Next item</button>
+    </div>
+  </section>
+
+  <section class="screen" id="end" hidden aria-labelledby="rank">
+    <div class="result-head">
+      <p class="eyebrow" data-i18n="result">Your result</p>
+      <div class="final"><span class="big" id="finalScore">0</span><span class="of" id="finalOf">/ 10</span></div>
+      <h2 class="rank" id="rank" tabindex="-1">Keep Learning</h2>
+      <p class="lede" id="rankMsg"></p>
+    </div>
+    <div class="cert-block">
+      <h3 class="sub-head" data-i18n="certHead">Your certificate</h3>
+      <img class="cert-img" id="certImg" alt="" width="1600" height="1131">
+      <div class="actions">
+        <button type="button" class="btn primary" id="saveBtn" hidden data-i18n="save">Save certificate</button>
+      </div>
+      <p class="save-status" id="saveStatus" role="status"></p>
+      <p class="cert-hint" data-i18n="certHint">Take a photo of your certificate, or press and hold it to save it on your phone.</p>
+    </div>
+    <div class="misses" id="missesWrap" hidden>
+      <h3 class="sub-head" data-i18n="missesHead">Answers to remember</h3>
+      <ul id="missList"></ul>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="againBtn" data-i18n="again">Play again</button>
+    </div>
+    <p class="idle" id="idle"></p>
+  </section>
+
+  <footer class="foot">
+    <span data-i18n="foot1">Medical Imaging · King Abdullah Specialized Hospital · MNGHA</span>
+    <span data-i18n="foot2">#IDoR2026 · #RespectTheField</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var T = {
+    en: {
+      dir: 'ltr', langBtn: 'العربية', otherLang: 'ar',
+      brand: 'IDoR 2026 · Respect the Field', status: 'MAGNET ON · 24/7',
+      eyebrow: 'MRI safety game', titleA: 'Safe or', titleB: 'Not Safe?',
+      lede: 'Imagine you are going into the MRI room for a scan, or to stay with a family member. What can come in with you? Sort 10 things into the right group.',
+      out: 'Leave it out', tell: 'Tell the staff', in: 'OK to go in',
+      outDesc: 'Things you carry or wear that must stay outside',
+      tellDesc: 'Things in or on your body that the team must know about',
+      inDesc: 'Things that are safe in the MRI room',
+      outSub: 'Stays outside the room', tellSub: 'The team checks it first', inSub: 'Safe in the room',
+      nameLabel: 'Your name for the certificate', namePh: 'Write your name', nameError: 'Please write your name to start.',
+      start: 'Start the game', fs: 'Full screen', fsExit: 'Exit full screen',
+      rounds: 'Rounds played on this device: {n}',
+      count: 'Item {i} of {n}', score: 'Score', ask: 'Where does it go?', choose: 'Choose where it goes',
+      answer: 'Answer:', next: 'Next item', seeResult: 'See my result',
+      v_ok: 'Correct!',
+      v_out_in: 'Not quite. The magnet would pull it in.',
+      v_out_tell: 'Close. Telling staff helps, but this must stay outside.',
+      v_tell_out: 'Not quite. It is in or on your body, so the team needs to know.',
+      v_tell_in: 'Not quite. The team must know about this first.',
+      v_in: 'Good thinking, but this one is safe to go in.',
+      result: 'Your result', certHead: 'Your certificate', certAlt: 'MRI safety certificate for {name}',
+      save: 'Save certificate', saved: 'Certificate saved.',
+      saveFail: 'The certificate could not be saved here. Take a photo of it instead.',
+      certHint: 'Take a photo of your certificate, or press and hold it to save it on your phone.',
+      missesHead: 'Answers to remember', again: 'Play again', idle: 'Back to the start screen in {n} s',
+      foot1: 'Medical Imaging · King Abdullah Specialized Hospital · MNGHA', foot2: '#IDoR2026 · #RespectTheField',
+      c_kicker: 'IDoR 2026 · INTERNATIONAL DAY OF RADIOLOGY', c_slogan: 'RESPECT THE FIELD',
+      c_title: 'MRI SAFETY CERTIFICATE', c_awarded: 'This certificate is awarded to',
+      c_line1: 'for completing the Safe or Not Safe? MRI safety challenge',
+      c_line2: 'on the International Day of Radiology 2026',
+      c_result: 'Result {s}/{n} · {rank}',
+      c_dept: 'Medical Imaging Department', c_hosp: 'King Abdullah Specialized Hospital · MNGHA',
+      c_date: 'Date', c_tags: '#IDoR2026 · #RespectTheField'
+    },
+    ar: {
+      dir: 'rtl', langBtn: 'English', otherLang: 'en',
+      brand: 'اليوم العالمي للأشعة 2026 · احترم المجال المغناطيسي', status: 'المغناطيس يعمل دائمًا · 24/7',
+      eyebrow: 'لعبة السلامة في الرنين المغناطيسي', titleA: 'آمن أم', titleB: 'غير آمن؟',
+      lede: 'تخيّل أنك ستدخل غرفة الرنين المغناطيسي لإجراء فحص، أو لمرافقة أحد أفراد أسرتك. ما الذي يمكن أن يدخل معك؟ صنّف 10 أشياء في المجموعة الصحيحة.',
+      out: 'اتركه خارجًا', tell: 'أخبر الفريق', in: 'يمكن إدخاله',
+      outDesc: 'أشياء تحملها أو ترتديها ويجب أن تبقى خارج الغرفة',
+      tellDesc: 'أشياء في جسمك أو عليه يجب أن يعرفها الفريق',
+      inDesc: 'أشياء آمنة داخل غرفة الرنين المغناطيسي',
+      outSub: 'يبقى خارج الغرفة', tellSub: 'يتحقق منه الفريق أولًا', inSub: 'آمن داخل الغرفة',
+      nameLabel: 'اسمك كما سيظهر في الشهادة', namePh: 'اكتب اسمك', nameError: 'فضلًا اكتب اسمك للبدء.',
+      start: 'ابدأ اللعبة', fs: 'ملء الشاشة', fsExit: 'الخروج من ملء الشاشة',
+      rounds: 'عدد الجولات على هذا الجهاز: {n}',
+      count: 'العنصر {i} من {n}', score: 'النتيجة', ask: 'أين مكانه؟', choose: 'اختر مكانه',
+      answer: 'الإجابة:', next: 'العنصر التالي', seeResult: 'اعرض نتيجتي',
+      v_ok: 'إجابة صحيحة!',
+      v_out_in: 'ليس تمامًا. سيجذبه المغناطيس إلى الجهاز.',
+      v_out_tell: 'إجابة قريبة. إخبار الفريق مفيد، لكن يجب أن يبقى هذا خارج الغرفة.',
+      v_tell_out: 'ليس تمامًا. إنه في جسمك أو عليه، لذا يجب أن يعرف الفريق عنه.',
+      v_tell_in: 'ليس تمامًا. يجب أن يعرف الفريق عن هذا أولًا.',
+      v_in: 'تفكير جيد، لكن هذا آمن ويمكن إدخاله.',
+      result: 'نتيجتك', certHead: 'شهادتك', certAlt: 'شهادة السلامة في الرنين المغناطيسي باسم {name}',
+      save: 'حفظ الشهادة', saved: 'تم حفظ الشهادة.',
+      saveFail: 'تعذّر حفظ الشهادة هنا. يمكنك تصويرها بدلًا من ذلك.',
+      certHint: 'صوّر شهادتك، أو اضغط عليها مطولًا لحفظها في جوالك.',
+      missesHead: 'إجابات تستحق التذكّر', again: 'العب مرة أخرى', idle: 'العودة إلى البداية خلال {n} ثانية',
+      foot1: 'إدارة التصوير الطبي · مستشفى الملك عبدالله التخصصي · الشؤون الصحية بوزارة الحرس الوطني', foot2: '#IDoR2026 · #RespectTheField',
+      c_kicker: 'اليوم العالمي للأشعة 2026', c_slogan: 'احترم المجال المغناطيسي',
+      c_title: 'شهادة السلامة في الرنين المغناطيسي', c_awarded: 'تُمنح هذه الشهادة إلى',
+      c_line1: 'تقديرًا لإتمام تحدي «آمن أم غير آمن؟» للسلامة في الرنين المغناطيسي',
+      c_line2: 'بمناسبة اليوم العالمي للأشعة 2026',
+      c_result: 'النتيجة {s}/{n} · {rank}',
+      c_dept: 'إدارة التصوير الطبي', c_hosp: 'مستشفى الملك عبدالله التخصصي · الشؤون الصحية بوزارة الحرس الوطني',
+      c_date: 'التاريخ', c_tags: '#IDoR2026 · #RespectTheField'
+    }
+  };
+
+  var SHAPE = {
+    out: '<svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><circle class="s-out" cx="12" cy="12" r="9" fill="none" stroke-width="3"/><path class="s-out" d="M5.6 18.4 18.4 5.6" stroke-width="3"/></svg>',
+    tell: '<svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><path class="s-tell" d="M12 2.5 22.5 20.5H1.5z"/><path class="s-mark" d="M12 9v5.2M12 17.4v.1" fill="none" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    in: '<svg class="shape" viewBox="0 0 24 24" aria-hidden="true"><rect class="s-in" x="2.5" y="2.5" width="19" height="19" rx="2.5"/><path class="s-mark" d="M7.5 12.5l3 3 6-7" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  var CHECK = '<svg class="vicon" viewBox="0 0 24 24" aria-hidden="true"><circle class="s-in" cx="12" cy="12" r="11"/><path class="s-mark" d="M7 12.5l3.2 3.2L17 8.6" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var CROSS = '<svg class="vicon" viewBox="0 0 24 24" aria-hidden="true"><circle class="s-out-fill" cx="12" cy="12" r="11"/><path class="s-mark" d="M8 8l8 8M16 8l-8 8" fill="none" stroke-width="2.6" stroke-linecap="round"/></svg>';
+
+  /* Everyday things a patient or family member might bring. Answers reflect general MRI safety practice; local policy may add steps. */
+  var ITEMS = [
+    { id: 'keys', a: 'out',
+      n: { en: 'Your keys', ar: 'مفاتيحك' },
+      w: { en: 'Keys are pulled hard toward the magnet and can fly into the scanner.', ar: 'يجذب المغناطيس المفاتيح بقوة، وقد تطير نحو جهاز الرنين.' },
+      icon: '<circle cx="20" cy="20" r="11"/><circle cx="20" cy="20" r="3.5"/><path d="M28 28l24 24M40 40l6-6M47 47l6-6"/>' },
+    { id: 'phone', a: 'out',
+      n: { en: 'Your mobile phone', ar: 'هاتفك الجوال' },
+      w: { en: 'The magnet can break your phone, and the phone can be pulled toward the scanner.', ar: 'قد يُتلف المغناطيس هاتفك، وقد ينجذب الهاتف نحو الجهاز.' },
+      icon: '<rect x="19" y="6" width="26" height="52" rx="6"/><path d="M28 12h8"/><circle cx="32" cy="50" r="2.5"/>' },
+    { id: 'coins', a: 'out',
+      n: { en: 'Coins in your pocket', ar: 'العملات المعدنية في جيبك' },
+      w: { en: 'Many coins contain metal that the magnet pulls on. Empty your pockets before going in.', ar: 'تحتوي كثير من العملات على معادن يجذبها المغناطيس. أفرغ جيوبك قبل الدخول.' },
+      icon: '<ellipse cx="32" cy="16" rx="18" ry="6"/><path d="M14 16v10c0 3.3 8 6 18 6s18-2.7 18-6V16"/><path d="M14 26v10c0 3.3 8 6 18 6s18-2.7 18-6V26"/><path d="M14 36v10c0 3.3 8 6 18 6s18-2.7 18-6V36"/>' },
+    { id: 'card', a: 'out',
+      n: { en: 'Your bank card', ar: 'بطاقتك البنكية' },
+      w: { en: 'The magnet can wipe your bank card so it stops working.', ar: 'قد يمسح المغناطيس بيانات بطاقتك البنكية فتتوقف عن العمل.' },
+      icon: '<rect x="6" y="14" width="52" height="36" rx="5"/><path d="M6 24h52" stroke-width="5"/><rect x="13" y="32" width="11" height="8" rx="2"/><path d="M32 41h18"/>' },
+    { id: 'scarfpins', a: 'out',
+      n: { en: 'Pins holding your headscarf', ar: 'دبابيس تثبيت الحجاب' },
+      w: { en: 'Even small pins can fly toward the magnet. Take them out before you go in.', ar: 'حتى الدبابيس الصغيرة قد تطير نحو المغناطيس، لذا تُنزع قبل الدخول.' },
+      icon: '<circle cx="16" cy="16" r="6"/><path d="M20 20l32 32"/><circle cx="44" cy="12" r="5"/><path d="M42 17l-8 39"/>' },
+    { id: 'hairpins', a: 'out',
+      n: { en: 'Hairpins and hair clips', ar: 'دبابيس ومشابك الشعر' },
+      w: { en: 'They are small, but the magnet can still pull them in.', ar: 'رغم صغر حجمها، يستطيع المغناطيس جذبها.' },
+      icon: '<path d="M8 24h40a5 5 0 0 0 0-10h-3l-4 4-4-4-4 4-4-4-4 4-4-4h-9"/><path d="M8 48h40a5 5 0 0 0 0-10h-3l-4 4-4-4-4 4-4-4-4 4-4-4h-9"/>' },
+    { id: 'watch', a: 'out',
+      n: { en: 'Your watch', ar: 'ساعتك' },
+      w: { en: 'The magnet can stop or break your watch.', ar: 'قد يوقف المغناطيس ساعتك أو يتلفها.' },
+      icon: '<path d="M24 18l2-12h12l2 12M24 46l2 12h12l2-12"/><circle cx="32" cy="32" r="15"/><path d="M32 24v8l6 4"/>' },
+    { id: 'earbuds', a: 'out',
+      n: { en: 'Wireless earbuds', ar: 'السماعات اللاسلكية' },
+      w: { en: 'Earbuds have small magnets and batteries inside. The scanner can damage them or pull them in.', ar: 'في السماعات مغناطيسات وبطاريات صغيرة، وقد يتلفها الجهاز أو يجذبها.' },
+      icon: '<circle cx="20" cy="18" r="9"/><rect x="18" y="26" width="7" height="26" rx="3.5"/><circle cx="44" cy="18" r="9"/><rect x="39" y="26" width="7" height="26" rx="3.5"/>' },
+    { id: 'glasses', a: 'out',
+      n: { en: 'Your glasses', ar: 'نظارتك' },
+      w: { en: 'Metal frames can be pulled by the magnet. Leave them with your belongings before going in.', ar: 'قد يجذب المغناطيس الإطارات المعدنية. اتركها مع أغراضك قبل الدخول.' },
+      icon: '<circle cx="18" cy="36" r="10"/><circle cx="46" cy="36" r="10"/><path d="M28 34c2-3 6-3 8 0M8 34 4 22M56 34l4-12"/>' },
+    { id: 'jewellery', a: 'out',
+      n: { en: 'Earrings and necklace', ar: 'الأقراط والقلادة' },
+      w: { en: 'Metal jewellery can be pulled by the magnet or get warm during the scan.', ar: 'قد يجذب المغناطيس المجوهرات المعدنية، أو قد تسخن أثناء الفحص.' },
+      icon: '<path d="M12 8c0 18 9 28 20 28s20-10 20-28"/><path d="M32 36l-6 9 6 9 6-9z"/>' },
+    { id: 'stroller', a: 'out',
+      n: { en: 'A baby stroller', ar: 'عربة الأطفال' },
+      w: { en: 'A stroller has a metal frame that the magnet can pull into the scanner. Leave it outside the MRI room.', ar: 'لعربة الأطفال هيكل معدني قد يجذبه المغناطيس نحو الجهاز، لذا تبقى خارج غرفة الرنين.' },
+      icon: '<path d="M8 12h8l6 24h30"/><path d="M24 36c0-14 10-22 28-22v22"/><circle cx="26" cy="50" r="6"/><circle cx="48" cy="50" r="6"/>' },
+    { id: 'hearing', a: 'out',
+      n: { en: 'Hearing aids', ar: 'سماعات الأذن الطبية' },
+      w: { en: 'The magnet can damage hearing aids. Take them out before going in, and the team will help you communicate.', ar: 'قد يُتلف المغناطيس سماعات الأذن الطبية. تُنزع قبل الدخول، وسيساعدك الفريق على التواصل.' },
+      icon: '<path d="M38 6c10 2 15 11 12 20-2 6-7 9-13 9"/><path d="M37 35c-5 0-8 4-8 9v4"/><circle cx="29" cy="54" r="5"/>' },
+    { id: 'wheelchair', a: 'out',
+      n: { en: 'Your own wheelchair', ar: 'كرسيك المتحرك الخاص' },
+      w: { en: 'Most wheelchairs have steel parts the magnet pulls in. The team will move you to a wheelchair made for MRI.', ar: 'في معظم الكراسي المتحركة أجزاء حديدية يجذبها المغناطيس. سينقلك الفريق إلى كرسي متحرك مخصص للرنين المغناطيسي.' },
+      icon: '<circle cx="26" cy="44" r="14"/><path d="M18 8v24h22l6 16h8v3"/><path d="M18 20h16"/><circle cx="54" cy="55" r="3"/>' },
+
+    { id: 'pacemaker', a: 'tell',
+      n: { en: 'A pacemaker or heart device', ar: 'منظم ضربات القلب أو جهاز قلبي مزروع' },
+      w: { en: 'Some heart devices can be scanned safely and some cannot. The team must check yours first.', ar: 'بعض أجهزة القلب يمكن فحصها بأمان وبعضها لا يمكن، لذا يجب أن يتحقق الفريق من جهازك أولًا.' },
+      icon: '<rect x="6" y="8" width="24" height="18" rx="7"/><path d="M18 26c0 8 4 13 12 15"/><path d="M45 31c-3-6-13-5-13 3 0 8 13 16 13 16s13-8 13-16c0-8-10-9-13-3z"/>' },
+    { id: 'cochlear', a: 'tell',
+      n: { en: 'A cochlear (hearing) implant', ar: 'زراعة القوقعة (لتحسين السمع)' },
+      w: { en: 'These implants have a magnet inside. The team must check the exact type before any scan.', ar: 'تحتوي هذه الزراعات على مغناطيس، ويجب أن يتحقق الفريق من نوعها بالضبط قبل أي فحص.' },
+      icon: '<path d="M20 30c0-10 7-18 17-18s17 8 17 18c0 9-8 11-8 19 0 5-4 9-9 9s-9-4-9-9"/><path d="M30 32c0-5 3-8 7-8s7 3 7 7"/><circle cx="12" cy="14" r="7"/><circle cx="12" cy="14" r="2"/>' },
+    { id: 'eye', a: 'tell',
+      n: { en: 'An old eye injury from metal work', ar: 'إصابة قديمة في العين من أعمال المعادن' },
+      w: { en: 'A tiny piece of metal left in the eye could move during the scan. Tell staff about any eye injury from grinding, welding or metal work.', ar: 'قد تتحرك شظية معدنية صغيرة باقية في العين أثناء الفحص. أخبر الفريق عن أي إصابة في العين بسبب تجليخ المعادن أو اللحام.' },
+      icon: '<path d="M4 36s11-15 28-15 28 15 28 15-11 15-28 15S4 36 4 36z"/><circle cx="32" cy="36" r="8"/><path d="M50 6l-4 7M58 14l-7 3M42 4v7"/>' },
+    { id: 'plate', a: 'tell',
+      n: { en: 'Plates or screws from an operation', ar: 'شرائح أو مسامير من عملية جراحية' },
+      w: { en: 'Most are safe to scan, but the team needs to know what you have and where.', ar: 'معظمها آمن عند الفحص، لكن يحتاج الفريق إلى معرفة نوعها ومكانها.' },
+      icon: '<rect x="6" y="24" width="52" height="16" rx="8"/><circle cx="18" cy="32" r="3.5"/><circle cx="32" cy="32" r="3.5"/><circle cx="46" cy="32" r="3.5"/>' },
+    { id: 'pump', a: 'tell',
+      n: { en: 'An insulin pump or sugar sensor', ar: 'مضخة الإنسولين أو حساس السكر' },
+      w: { en: 'These usually need to come off before the scan. Tell staff early so your treatment can be planned.', ar: 'عادةً تُنزع هذه الأجهزة قبل الفحص. أخبر الفريق مبكرًا حتى يُخطَّط لعلاجك.' },
+      icon: '<rect x="8" y="12" width="28" height="38" rx="7"/><rect x="14" y="19" width="16" height="11" rx="2"/><path d="M18 40h8"/><path d="M36 42c12 0 10 14 22 14"/>' },
+    { id: 'patch', a: 'tell',
+      n: { en: 'A medicine patch on your skin', ar: 'لصقة دوائية على الجلد' },
+      w: { en: 'Some patches have a thin metal layer that can heat up and burn the skin. Staff will check it.', ar: 'بعض اللصقات فيها طبقة معدنية رقيقة قد تسخن وتحرق الجلد، وسيتحقق منها الفريق.' },
+      icon: '<rect x="12" y="12" width="40" height="40" rx="10"/><rect x="22" y="22" width="20" height="20" rx="4"/><path d="M18 18h.01M46 18h.01M18 46h.01M46 46h.01" stroke-width="4"/>' },
+    { id: 'tattoo', a: 'tell',
+      n: { en: 'A tattoo or permanent make-up', ar: 'وشم أو مكياج دائم' },
+      w: { en: 'Some inks contain metal and can rarely feel warm during the scan. Telling staff lets them take simple steps to keep you comfortable.', ar: 'بعض الأحبار تحتوي على معادن، وقد تسبب نادرًا شعورًا بالدفء أثناء الفحص. إخبار الفريق يساعدهم على اتخاذ خطوات بسيطة لراحتك.' },
+      icon: '<path d="M32 6c9 13 16 22 16 31a16 16 0 0 1-32 0c0-9 7-18 16-31z"/><path d="M25 40c0 4 3 7 7 7"/>' },
+    { id: 'pregnant', a: 'tell',
+      n: { en: 'Being pregnant, or maybe pregnant', ar: 'الحمل أو احتمال الحمل' },
+      w: { en: 'Tell staff if you are or might be pregnant, so the doctors can plan the safest time and way to do your scan.', ar: 'أخبري الفريق إن كنتِ حاملًا أو تحتملين الحمل، ليحدد الأطباء أنسب وقت وطريقة لإجراء الفحص.' },
+      icon: '<path d="M32 54S10 40 10 24a11 11 0 0 1 22-4 11 11 0 0 1 22 4c0 16-22 30-22 30z"/><path d="M32 40s-7-4.5-7-9.5a3.5 3.5 0 0 1 7-1.3 3.5 3.5 0 0 1 7 1.3c0 5-7 9.5-7 9.5z"/>' },
+
+    { id: 'gown', a: 'in',
+      n: { en: 'A hospital gown', ar: 'رداء المستشفى' },
+      w: { en: 'Hospital gowns have no metal, which is why patients change into one for the scan.', ar: 'لا يحتوي رداء المستشفى على أي معدن، ولهذا يرتديه المرضى أثناء الفحص.' },
+      icon: '<path d="M23 6c2 4 5 6 9 6s7-2 9-6l13 9-6 10-5-3v36H21V22l-5 3-6-10z"/><path d="M32 14v42" stroke-dasharray="2 6"/>' },
+    { id: 'earplugs', a: 'in',
+      n: { en: 'Foam earplugs', ar: 'سدادات الأذن الإسفنجية' },
+      w: { en: 'Foam earplugs have no metal and protect your ears from the loud scanner noise.', ar: 'سدادات الأذن الإسفنجية خالية من المعادن، وتحمي أذنيك من صوت الجهاز المرتفع.' },
+      icon: '<rect x="12" y="18" width="16" height="32" rx="8" transform="rotate(-12 20 34)"/><rect x="36" y="14" width="16" height="32" rx="8" transform="rotate(12 44 30)"/>' },
+    { id: 'headphones', a: 'in',
+      n: { en: 'Headphones from the MRI team', ar: 'سماعات من فريق الرنين المغناطيسي' },
+      w: { en: 'The MRI team’s headphones are made for the scanner and protect your hearing.', ar: 'سماعات فريق الرنين مصممة للاستخدام داخل الجهاز، وتحمي سمعك.' },
+      icon: '<path d="M12 42v-8a20 20 0 0 1 40 0v8"/><rect x="7" y="38" width="12" height="18" rx="5"/><rect x="45" y="38" width="12" height="18" rx="5"/>' },
+    { id: 'blanket', a: 'in',
+      n: { en: 'A plain cotton blanket', ar: 'بطانية قطنية عادية' },
+      w: { en: 'A plain cotton blanket has no metal and keeps you warm during the scan.', ar: 'البطانية القطنية العادية خالية من المعادن، وتبقيك دافئًا أثناء الفحص.' },
+      icon: '<rect x="8" y="12" width="48" height="12" rx="4"/><rect x="8" y="26" width="48" height="12" rx="4"/><rect x="8" y="40" width="48" height="12" rx="4"/>' },
+    { id: 'scarf', a: 'in',
+      n: { en: 'A plain cotton headscarf with no pins', ar: 'حجاب قطني عادي بلا دبابيس' },
+      w: { en: 'Plain cotton has no metal. Just remove any pins, clips or decorated fabric first.', ar: 'القطن العادي لا يحتوي على معادن. يكفي إزالة أي دبابيس أو مشابك أو زينة أولًا.' },
+      icon: '<path d="M32 6c-12 0-20 10-20 22 0 8 3 16 8 22l-4 10h32l-4-10c5-6 8-14 8-22 0-12-8-22-20-22z"/><path d="M22 30c2 6 6 9 10 9s8-3 10-9"/>' },
+    { id: 'family', a: 'in',
+      n: { en: 'A family member checked by staff', ar: 'فرد من الأسرة تحقق منه الفريق' },
+      w: { en: 'A parent or relative can stay with you once staff have checked them and they have removed all metal.', ar: 'يمكن لأحد الوالدين أو الأقارب البقاء معك بعد أن يتحقق منه الفريق ويزيل كل ما معه من معادن.' },
+      icon: '<circle cx="22" cy="18" r="7"/><path d="M8 52c0-10 6-18 14-18s14 8 14 18"/><circle cx="44" cy="24" r="6"/><path d="M34 52c1-9 5-15 10-15s9 6 10 15"/>' }
+  ];
+
+  var BY_ID = {};
+  ITEMS.forEach(function (it) { BY_ID[it.id] = it; });
+
+  var MIX = { out: 4, tell: 3, in: 3 };
+  var RANKS = [
+    { min: 10, title: { en: 'MRI Safety Champion', ar: 'بطل السلامة في الرنين المغناطيسي' },
+      msg: { en: 'A perfect round. You know exactly what is safe around the magnet.', ar: 'جولة مثالية. أنت تعرف تمامًا ما هو آمن حول المغناطيس.' } },
+    { min: 8, title: { en: 'Safety Star', ar: 'نجم السلامة' },
+      msg: { en: 'Great job. Have a look at the answers below.', ar: 'عمل رائع. ألقِ نظرة على الإجابات أدناه.' } },
+    { min: 5, title: { en: 'Good Start', ar: 'بداية جيدة' },
+      msg: { en: 'You know the basics. The answers below will help you next time.', ar: 'أنت تعرف الأساسيات، وستساعدك الإجابات أدناه في المرة القادمة.' } },
+    { min: 0, title: { en: 'Keep Learning', ar: 'واصل التعلّم' },
+      msg: { en: 'The magnet surprises many people. Read the answers below, then try another round.', ar: 'المغناطيس يفاجئ كثيرًا من الناس. اقرأ الإجابات أدناه، ثم جرّب جولة أخرى.' } }
+  ];
+  var END_IDLE = 90;
+  var PLAY_IDLE = 120;
+  var ROUNDS_KEY = 'idor2026-safe-or-not-rounds';
+  var LANG_KEY = 'idor2026-safe-or-not-lang';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var screens = { start: $('start'), play: $('play'), end: $('end') };
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function storedLang() {
+    try { var v = window.localStorage.getItem(LANG_KEY); if (v === 'en' || v === 'ar') return v; } catch (e) {}
+    var nav = (navigator.language || '').toLowerCase();
+    return nav.indexOf('ar') === 0 ? 'ar' : 'en';
+  }
+  var lang = storedLang();
+
+  function fresh() { return { screen: 'start', name: '', round: [], i: 0, score: 0, results: [], dateISO: '' }; }
+  var state = fresh();
+
+  function t(key, vars) {
+    var s = T[lang][key];
+    if (s == null) s = T.en[key] || '';
+    if (vars) s = s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return s;
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var x = a[i]; a[i] = a[j]; a[j] = x;
+    }
+    return a;
+  }
+
+  function buildRound() {
+    var picked = [];
+    Object.keys(MIX).forEach(function (k) {
+      picked = picked.concat(shuffle(ITEMS.filter(function (x) { return x.a === k; })).slice(0, MIX[k]));
+    });
+    return shuffle(picked).map(function (x) { return x.id; });
+  }
+
+  function svgIcon(item) {
+    return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + item.icon + '</svg>';
+  }
+
+  function show(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== name; });
+    state.screen = name;
+  }
+
+  function verdictKey(item, pick) {
+    if (pick === item.a) return 'v_ok';
+    if (item.a === 'out' && pick === 'in') return 'v_out_in';
+    if (item.a === 'out') return 'v_out_tell';
+    if (item.a === 'tell' && pick === 'out') return 'v_tell_out';
+    if (item.a === 'tell') return 'v_tell_in';
+    return 'v_in';
+  }
+
+  function rankFor(s) {
+    for (var k = 0; k < RANKS.length; k++) { if (s >= RANKS[k].min) return RANKS[k]; }
+    return RANKS[RANKS.length - 1];
+  }
+
+  /* ---------- Language ---------- */
+  function applyLang() {
+    var root = document.documentElement;
+    root.lang = lang;
+    root.dir = T[lang].dir;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-ph]'), function (el) {
+      el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-aria]'), function (el) {
+      el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+    });
+    $('titleA').textContent = t('titleA');
+    $('titleB').textContent = t('titleB');
+    var lb = $('langBtn');
+    lb.textContent = t('langBtn');
+    lb.setAttribute('lang', T[lang].otherLang);
+    updateFsLabel();
+    renderRounds();
+    if (state.screen === 'play' && state.round.length) renderItem(false);
+    if (state.screen === 'end' && state.round.length) renderEnd();
+  }
+
+  function setLang(next) {
+    lang = next === 'ar' ? 'ar' : 'en';
+    try { window.localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    applyLang();
+  }
+
+  /* ---------- Play ---------- */
+  function renderDots() {
+    var d = $('dots');
+    d.style.gridTemplateColumns = 'repeat(' + state.round.length + ', minmax(0, 1fr))';
+    d.innerHTML = '';
+    state.round.forEach(function (id, idx) {
+      var el = document.createElement('i');
+      var r = state.results[idx];
+      if (r) el.className = r.ok ? 'ok' : 'miss';
+      else if (idx === state.i) el.className = 'cur';
+      d.appendChild(el);
+    });
+  }
+
+  function renderItem(animate) {
+    var item = BY_ID[state.round[state.i]];
+    $('countText').textContent = t('count', { i: state.i + 1, n: state.round.length });
+    $('scoreText').textContent = state.score;
+    var ic = $('itemIcon');
+    ic.className = 'item-icon';
+    ic.innerHTML = svgIcon(item);
+    if (animate) { void ic.offsetWidth; ic.classList.add('enter'); }
+    $('bore').className = 'bore';
+    $('itemName').textContent = item.n[lang];
+    renderDots();
+    var done = state.results[state.i];
+    if (done) {
+      showFeedback(item, done.pick, false);
+    } else {
+      $('choices').hidden = false;
+      $('ask').hidden = false;
+      $('feedback').hidden = true;
+    }
+  }
+
+  function showFeedback(item, pick, animate) {
+    var ok = pick === item.a;
+    $('choices').hidden = true;
+    $('ask').hidden = true;
+    var fb = $('feedback');
+    fb.hidden = false;
+    fb.className = 'feedback ' + (ok ? 'good' : 'bad');
+    var v = $('verdict');
+    v.innerHTML = (ok ? CHECK : CROSS) + '<span></span>';
+    v.querySelector('span').textContent = t(verdictKey(item, pick));
+    var al = $('answerLine');
+    al.innerHTML = '<span></span>' + SHAPE[item.a] + '<span></span>';
+    al.firstChild.textContent = t('answer');
+    al.lastChild.textContent = t(item.a);
+    $('why').textContent = item.w[lang];
+    $('nextBtn').textContent = state.i === state.round.length - 1 ? t('seeResult') : t('next');
+    if (animate) {
+      var bore = $('bore');
+      var ic = $('itemIcon');
+      if (!ok && item.a === 'out' && pick === 'in') {
+        ic.classList.add('yank');
+        bore.classList.add('shake');
+      } else {
+        bore.classList.add(ok ? 'glow-ok' : 'glow-miss');
+      }
+      $('nextBtn').focus({ preventScroll: true });
+      try { fb.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) {}
+    }
+  }
+
+  function choose(pick) {
+    if (state.screen !== 'play' || state.results[state.i]) return;
+    var item = BY_ID[state.round[state.i]];
+    var ok = pick === item.a;
+    if (ok) state.score += 1;
+    state.results[state.i] = { id: item.id, pick: pick, ok: ok };
+    $('scoreText').textContent = state.score;
+    renderDots();
+    showFeedback(item, pick, true);
+  }
+
+  function next() {
+    if (!state.results[state.i]) return;
+    if (state.i < state.round.length - 1) {
+      state.i += 1;
+      renderItem(true);
+      $('itemName').focus({ preventScroll: true });
+      try { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) {}
+    } else {
+      finish();
+    }
+  }
+
+  /* ---------- Certificate (drawn on a canvas, shown as an image) ---------- */
+  var CW = 1600, CH = 1131;
+  var CC = { navy: '#0A1A33', navy2: '#12284A', paper: '#F6F8FB', ink: '#13223A', muted: '#4A5A70', rule: '#2B5C8F', cyan: '#4FD1E8', amber: '#F5B312', out: '#D9493E', tell: '#E9A500', in: '#23955F', white: '#FFFFFF' };
+  var lastCanvas = null;
+  var certToken = 0;
+  var fontsReady = null;
+
+  function isArabicText(s) { return /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/.test(s); }
+
+  function loadFonts() {
+    if (fontsReady) return fontsReady;
+    if (!document.fonts || typeof document.fonts.load !== 'function') { fontsReady = Promise.resolve(); return fontsReady; }
+    var sample = 'Aa شهادة';
+    var specs = ['900 64px Archivo', '800 64px Archivo', '500 30px "IBM Plex Sans"', '600 30px "IBM Plex Sans"', '700 30px "IBM Plex Sans"',
+      '800 64px "Noto Kufi Arabic"', '500 30px "IBM Plex Sans Arabic"', '600 30px "IBM Plex Sans Arabic"', '700 30px "IBM Plex Sans Arabic"'];
+    var all = Promise.all(specs.map(function (s) { return document.fonts.load(s, sample).catch(function () {}); }));
+    var timeout = new Promise(function (resolve) { setTimeout(resolve, 3000); });
+    fontsReady = Promise.race([all, timeout]);
+    return fontsReady;
+  }
+
+  function family(kind, arabic) {
+    if (arabic) return kind === 'display' ? '"Noto Kufi Arabic", "IBM Plex Sans Arabic", sans-serif' : '"IBM Plex Sans Arabic", sans-serif';
+    return kind === 'display' ? 'Archivo, "Arial Narrow", sans-serif' : '"IBM Plex Sans", system-ui, sans-serif';
+  }
+  function setFont(ctx, weight, size, kind, arabic) {
+    ctx.font = weight + ' ' + size + 'px ' + family(kind, arabic);
+    if ('fontStretch' in ctx) {
+      try { ctx.fontStretch = (kind === 'display' && !arabic) ? 'condensed' : 'normal'; } catch (e) {}
+    }
+  }
+  function fitFont(ctx, text, weight, size, min, kind, arabic, maxW) {
+    var s = size;
+    setFont(ctx, weight, s, kind, arabic);
+    while (ctx.measureText(text).width > maxW && s > min) { s -= 2; setFont(ctx, weight, s, kind, arabic); }
+    return s;
+  }
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function formatDate(iso, lng) {
+    var d = iso ? new Date(iso) : new Date();
+    try {
+      return new Intl.DateTimeFormat(lng === 'ar' ? 'ar-SA-u-ca-gregory-nu-latn' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+    } catch (e) { return d.toDateString(); }
+  }
+
+  function drawShapes(ctx, cx, cy) {
+    var s = 34, gap = 58;
+    // red circle with slash
+    var x1 = cx - gap;
+    ctx.strokeStyle = CC.out; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.arc(x1, cy, s / 2 - 2, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1 - 10, cy + 10); ctx.lineTo(x1 + 10, cy - 10); ctx.stroke();
+    // amber triangle
+    ctx.fillStyle = CC.tell;
+    ctx.beginPath(); ctx.moveTo(cx, cy - s / 2); ctx.lineTo(cx + s / 2 + 2, cy + s / 2 - 2); ctx.lineTo(cx - s / 2 - 2, cy + s / 2 - 2); ctx.closePath(); ctx.fill();
+    // green square
+    var x3 = cx + gap;
+    ctx.fillStyle = CC.in;
+    roundRect(ctx, x3 - s / 2, cy - s / 2, s, s, 4); ctx.fill();
+  }
+
+  function drawCertificate(canvas, d) {
+    var ar = d.lang === 'ar';
+    var L = T[d.lang];
+    canvas.width = CW; canvas.height = CH;
+    var ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'alphabetic';
+    ctx.direction = ar ? 'rtl' : 'ltr';
+
+    ctx.fillStyle = CC.paper; ctx.fillRect(0, 0, CW, CH);
+    ctx.strokeStyle = CC.navy; ctx.lineWidth = 16; ctx.strokeRect(28, 28, CW - 56, CH - 56);
+    ctx.strokeStyle = CC.rule; ctx.lineWidth = 2; ctx.strokeRect(52, 52, CW - 104, CH - 104);
+
+    // Header band with the magnet's field lines and the scanner bore
+    var bx = 72, by = 72, bw = CW - 144, bh = 170;
+    ctx.fillStyle = CC.navy; ctx.fillRect(bx, by, bw, bh);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.clip();
+    var rx = ar ? bx + 150 : bx + bw - 150, ry = by + bh / 2;
+    ctx.strokeStyle = 'rgba(79,209,232,0.35)'; ctx.lineWidth = 2;
+    [28, 56, 90, 130].forEach(function (b) {
+      [-1, 1].forEach(function (sg) {
+        ctx.beginPath(); ctx.ellipse(rx, ry + sg * b, b * 1.25, b, 0, 0, Math.PI * 2); ctx.stroke();
+      });
+    });
+    ctx.fillStyle = CC.navy; ctx.beginPath(); ctx.arc(rx, ry, 54, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = CC.navy2; ctx.lineWidth = 22; ctx.beginPath(); ctx.arc(rx, ry, 42, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = CC.cyan; ctx.lineWidth = 2;
+    [31, 53].forEach(function (r) { ctx.beginPath(); ctx.arc(rx, ry, r, 0, Math.PI * 2); ctx.stroke(); });
+    ctx.restore();
+
+    var tx = ar ? bx + bw - 44 : bx + 44;
+    ctx.textAlign = ar ? 'right' : 'left';
+    ctx.fillStyle = CC.cyan;
+    setFont(ctx, 600, 24, 'body', ar);
+    ctx.fillText(L.c_kicker, tx, by + 62);
+    ctx.fillStyle = CC.white;
+    fitFont(ctx, L.c_slogan, ar ? 800 : 900, ar ? 48 : 66, 28, 'display', ar, bw - 380);
+    ctx.fillText(L.c_slogan, tx, by + 136);
+
+    // Title and recipient
+    var cx = CW / 2;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = CC.navy;
+    fitFont(ctx, L.c_title, ar ? 800 : 900, ar ? 60 : 86, 34, 'display', ar, CW - 320);
+    ctx.fillText(L.c_title, cx, 352);
+
+    ctx.fillStyle = CC.muted;
+    setFont(ctx, 500, 30, 'body', ar);
+    ctx.fillText(L.c_awarded, cx, 428);
+
+    var nameAr = isArabicText(d.name);
+    ctx.direction = nameAr ? 'rtl' : 'ltr';
+    ctx.fillStyle = CC.navy;
+    fitFont(ctx, d.name, 800, nameAr ? 80 : 104, 40, 'display', nameAr, CW - 380);
+    ctx.fillText(d.name, cx, nameAr ? 548 : 545);
+    ctx.direction = ar ? 'rtl' : 'ltr';
+
+    ctx.strokeStyle = CC.amber; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(cx - 440, 592); ctx.lineTo(cx + 440, 592); ctx.stroke();
+
+    ctx.fillStyle = CC.ink;
+    fitFont(ctx, L.c_line1, 500, 30, 20, 'body', ar, CW - 280);
+    ctx.fillText(L.c_line1, cx, 660);
+    setFont(ctx, 500, 30, 'body', ar);
+    ctx.fillText(L.c_line2, cx, 708);
+
+    // Result pill
+    var res = L.c_result.replace('{s}', d.score).replace('{n}', d.total).replace('{rank}', d.rank);
+    setFont(ctx, 700, 32, 'body', ar);
+    var pw = Math.min(ctx.measureText(res).width + 96, CW - 300), ph = 76, py = 766;
+    ctx.fillStyle = CC.navy; roundRect(ctx, cx - pw / 2, py, pw, ph, 38); ctx.fill();
+    ctx.fillStyle = CC.white; ctx.textBaseline = 'middle';
+    fitFont(ctx, res, 700, 32, 20, 'body', ar, pw - 60);
+    ctx.fillText(res, cx, py + ph / 2 + 2);
+    ctx.textBaseline = 'alphabetic';
+
+    // Footer: department (start side), date (end side), label shapes (centre)
+    var sx = ar ? CW - 130 : 130, ex = ar ? 130 : CW - 130;
+    ctx.strokeStyle = CC.rule; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx, 912); ctx.lineTo(ar ? sx - 470 : sx + 470, 912); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ex, 912); ctx.lineTo(ar ? ex + 300 : ex - 300, 912); ctx.stroke();
+
+    ctx.textAlign = ar ? 'right' : 'left';
+    ctx.fillStyle = CC.navy;
+    setFont(ctx, 700, 28, 'body', ar);
+    ctx.fillText(L.c_dept, sx, 958);
+    ctx.fillStyle = CC.muted;
+    fitFont(ctx, L.c_hosp, 500, 22, 14, 'body', ar, 520);
+    ctx.fillText(L.c_hosp, sx, 996);
+
+    ctx.textAlign = ar ? 'left' : 'right';
+    ctx.fillStyle = CC.muted;
+    setFont(ctx, 500, 22, 'body', ar);
+    ctx.fillText(L.c_date, ex, 958);
+    ctx.fillStyle = CC.navy;
+    setFont(ctx, 700, 28, 'body', ar);
+    ctx.fillText(formatDate(d.dateISO, d.lang), ex, 996);
+
+    drawShapes(ctx, cx, 960);
+
+    ctx.direction = 'ltr';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = CC.muted;
+    setFont(ctx, 500, 20, 'body', false);
+    ctx.fillText(L.c_tags, cx, 1066);
+  }
+
+  function renderCertificate() {
+    var my = ++certToken;
+    var img = $('certImg');
+    loadFonts().then(function () {
+      if (my !== certToken || state.screen !== 'end') return;
+      var canvas = document.createElement('canvas');
+      var rank = rankFor(state.score);
+      try {
+        drawCertificate(canvas, {
+          name: state.name, score: state.score, total: state.round.length,
+          rank: rank.title[lang], lang: lang, dateISO: state.dateISO
+        });
+        lastCanvas = canvas;
+        img.src = canvas.toDataURL('image/png');
+        img.alt = t('certAlt', { name: state.name });
+      } catch (e) { lastCanvas = null; }
+    });
+  }
+
+  function certFilename() {
+    var n = (state.name || '').replace(/[^A-Za-z0-9 _-]/g, '').trim().replace(/\s+/g, '-');
+    return 'MRI-Safety-Certificate' + (n ? '-' + n : '') + '.png';
+  }
+
+  var downloads = null;
+  var inViewer = !!(window.claude && typeof window.claude.use === 'function');
+  /* Outside the Claude viewer (for example hosted on a public website) a plain download link works */
+  var plainDownload = !inViewer && typeof document.createElement('a').download === 'string';
+  function updateSaveBtn() { $('saveBtn').hidden = !(downloads || plainDownload); }
+  updateSaveBtn();
+  try {
+    if (inViewer) {
+      window.claude.use('downloads').then(function (d) { downloads = d || null; updateSaveBtn(); }, function () {});
+    }
+  } catch (e) {}
+
+  function saveWithLink(blob) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = certFilename();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  $('saveBtn').addEventListener('click', function () {
+    var status = $('saveStatus');
+    status.textContent = '';
+    if (!lastCanvas || !(downloads || plainDownload)) return;
+    lastCanvas.toBlob(function (blob) {
+      if (!blob) { status.textContent = t('saveFail'); return; }
+      if (!downloads) {
+        try { saveWithLink(blob); } catch (e) { status.textContent = t('saveFail'); }
+        return;
+      }
+      downloads.save({ filename: certFilename(), data: blob }).then(function (r) {
+        if (r && r.status === 'saved') status.textContent = t('saved');
+      }, function (err) {
+        var code = err && err.code;
+        if (code === 'declined' || code === 'rate_limited') return;
+        status.textContent = t('saveFail');
+        if (code === 'unavailable' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed') {
+          downloads = null; updateSaveBtn();
+        }
+      });
+    }, 'image/png');
+  });
+
+  /* ---------- End screen ---------- */
+  function renderEnd() {
+    var s = state.score;
+    var n = state.round.length;
+    $('finalScore').textContent = s;
+    $('finalOf').textContent = '/ ' + n;
+    var rank = rankFor(s);
+    $('rank').textContent = rank.title[lang];
+    $('rankMsg').textContent = rank.msg[lang];
+    var misses = state.results.filter(function (r) { return r && !r.ok; });
+    $('missesWrap').hidden = misses.length === 0;
+    var list = $('missList');
+    list.innerHTML = '';
+    misses.forEach(function (r) {
+      var item = BY_ID[r.id];
+      if (!item) return;
+      var li = document.createElement('li');
+      var name = document.createElement('span');
+      name.textContent = item.n[lang];
+      var ans = document.createElement('span');
+      ans.className = 'miss-ans';
+      ans.innerHTML = SHAPE[item.a] + '<span></span>';
+      ans.lastChild.textContent = t(item.a);
+      li.appendChild(name);
+      li.appendChild(ans);
+      list.appendChild(li);
+    });
+    $('saveStatus').textContent = '';
+    $('idle').textContent = t('idle', { n: END_IDLE });
+    renderCertificate();
+  }
+
+  function finish() {
+    state.dateISO = new Date().toISOString();
+    show('end');
+    renderEnd();
+    bumpRounds();
+    touch();
+    $('rank').focus({ preventScroll: true });
+    try { window.scrollTo({ top: 0 }); } catch (e) {}
+  }
+
+  /* ---------- Start / reset ---------- */
+  function startRound(name) {
+    var keepName = typeof name === 'string' ? name : state.name;
+    state = fresh();
+    state.name = keepName;
+    state.round = buildRound();
+    show('play');
+    renderItem(true);
+    requestWake();
+    touch();
+    $('itemName').focus({ preventScroll: true });
+  }
+
+  function clearCertificate() {
+    certToken++;
+    lastCanvas = null;
+    var img = $('certImg');
+    img.removeAttribute('src');
+    img.alt = '';
+  }
+
+  function reset() {
+    state = fresh();
+    clearCertificate();
+    var input = $('playerName');
+    input.value = '';
+    input.removeAttribute('aria-invalid');
+    $('nameError').hidden = true;
+    show('start');
+    renderRounds();
+    try { window.scrollTo({ top: 0 }); } catch (e) {}
+  }
+
+  $('startForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('playerName');
+    var name = input.value.replace(/\s+/g, ' ').trim().slice(0, 40);
+    if (name.length < 2) {
+      input.setAttribute('aria-invalid', 'true');
+      $('nameError').hidden = false;
+      input.focus();
+      return;
+    }
+    input.removeAttribute('aria-invalid');
+    $('nameError').hidden = true;
+    startRound(name);
+  });
+  $('playerName').addEventListener('input', function () {
+    if (!$('nameError').hidden && this.value.trim().length >= 2) {
+      this.removeAttribute('aria-invalid');
+      $('nameError').hidden = true;
+    }
+  });
+
+  /* Per-device round counter (convenience only; resets if site data is cleared) */
+  function getRounds() {
+    try { return parseInt(window.localStorage.getItem(ROUNDS_KEY) || '0', 10) || 0; } catch (e) { return null; }
+  }
+  function bumpRounds() {
+    try { window.localStorage.setItem(ROUNDS_KEY, String((getRounds() || 0) + 1)); } catch (e) {}
+  }
+  function renderRounds() {
+    var n = getRounds();
+    var el = $('rounds');
+    if (n === null || n === 0) { el.hidden = true; return; }
+    el.hidden = false;
+    el.textContent = t('rounds', { n: n });
+  }
+
+  /* ---------- Kiosk helpers ---------- */
+  var last = Date.now();
+  function touch() { last = Date.now(); }
+  ['pointerdown', 'keydown'].forEach(function (ev) { document.addEventListener(ev, touch, { passive: true }); });
+  setInterval(function () {
+    var idle = (Date.now() - last) / 1000;
+    if (state.screen === 'end') {
+      var left = Math.max(0, Math.ceil(END_IDLE - idle));
+      $('idle').textContent = t('idle', { n: left });
+      if (left === 0) reset();
+    } else if (state.screen === 'play' && idle > PLAY_IDLE) {
+      reset();
+    }
+  }, 1000);
+
+  var wake = null;
+  function requestWake() {
+    try {
+      if (!('wakeLock' in navigator) || wake) return;
+      navigator.wakeLock.request('screen').then(function (lock) {
+        wake = lock;
+        lock.addEventListener('release', function () { wake = null; });
+      }).catch(function () { wake = null; });
+    } catch (e) { wake = null; }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && state.screen !== 'start') requestWake();
+  });
+
+  var fsBtn = $('fsBtn');
+  function updateFsLabel() { fsBtn.textContent = document.fullscreenElement ? t('fsExit') : t('fs'); }
+  if (document.fullscreenEnabled) {
+    fsBtn.hidden = false;
+    fsBtn.addEventListener('click', function () {
+      try {
+        var p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () {});
+      } catch (e) {}
+    });
+    document.addEventListener('fullscreenchange', updateFsLabel);
+  }
+
+  /* ---------- Wiring ---------- */
+  $('langBtn').addEventListener('click', function () { setLang(lang === 'en' ? 'ar' : 'en'); });
+  /* Play again returns to the start screen with the name filled in, so the same visitor taps Start and a new visitor types their own name */
+  $('againBtn').addEventListener('click', function () {
+    var keep = state.name;
+    reset();
+    $('playerName').value = keep;
+  });
+  $('nextBtn').addEventListener('click', next);
+  Array.prototype.forEach.call(document.querySelectorAll('.choice'), function (btn) {
+    btn.addEventListener('click', function () { choose(btn.getAttribute('data-pick')); });
+  });
+
+  function boot(data) {
+    var s = data && data.state;
+    if (data && (data.lang === 'en' || data.lang === 'ar')) lang = data.lang;
+    if (s && Array.isArray(s.round) && s.round.length && s.round.every(function (id) { return BY_ID[id]; }) && screens[s.screen]) {
+      state = s;
+      if (typeof state.name !== 'string') state.name = '';
+      $('playerName').value = state.name;
+    }
+    show(state.screen);
+    applyLang();
+  }
+
+  var hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function') {
+    try { hot.snapshot(function () { return { state: state, lang: lang }; }); } catch (e) {}
+  }
+  if (hot && typeof hot.ready === 'function') hot.ready(boot);
+  else boot((hot && hot.data) || {});
+})();
+</script>
+</body>
+</html>
