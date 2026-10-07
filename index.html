@@ -90,6 +90,12 @@ body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:1
 .btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
 .btn.ghost:hover{border-color:var(--field)}
 .rounds{margin:0;font-family:var(--mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.privacy-note{margin:0;max-width:560px;color:var(--muted);font-size:.88rem;line-height:1.55}
+.timer-note{margin:0;color:var(--field);font-size:.98rem;font-weight:600;line-height:1.5}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:1rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stat b{color:var(--text);font-size:1.15rem}
+.stat.board{color:var(--amber);font-weight:700;font-size:1.1rem;border-color:var(--amber)}
 
 /* Play */
 .hud{display:flex;flex-direction:column;gap:10px}
@@ -196,6 +202,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       <p class="eyebrow" data-i18n="eyebrow">MRI safety game</p>
       <h1 id="start-title" class="title"><span id="titleA">Safe or</span><br><span id="titleB" class="accent">Not Safe?</span></h1>
       <p class="lede" data-i18n="lede">Imagine you are going into the MRI room for a scan, or to stay with a family member. What can come in with you? Sort 10 things into the right group.</p>
+      <p class="timer-note" data-i18n="timerNote">The clock only runs while you choose. Reading the answers is not timed.</p>
     </div>
     <ul class="legend">
       <li>
@@ -222,13 +229,14 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
         <button type="button" class="btn ghost" id="fsBtn" hidden>Full screen</button>
       </div>
     </form>
+    <p class="privacy-note" id="privacyNote" hidden data-i18n="privacy">Your name stays on your device. We record anonymous results (score, answers and language) for event statistics.</p>
     <p class="rounds" id="rounds" hidden></p>
   </section>
 
   <section class="screen" id="play" hidden aria-labelledby="itemName">
     <div class="hud">
       <div class="dots" id="dots" aria-hidden="true"></div>
-      <div class="hud-text"><span id="countText">Item 1 of 10</span><span><span data-i18n="score">Score</span> <b id="scoreText">0</b></span></div>
+      <div class="hud-text"><span id="countText">Item 1 of 10</span><span><span data-i18n="timeLabel">Time</span> <b id="timeText">0:00</b></span><span><span data-i18n="score">Score</span> <b id="scoreText">0</b></span></div>
     </div>
     <div class="stage">
       <div class="bore-wrap" aria-hidden="true"><div class="bore" id="bore"><div class="item-icon" id="itemIcon"></div></div></div>
@@ -261,6 +269,10 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     <div class="result-head">
       <p class="eyebrow" data-i18n="result">Your result</p>
       <div class="final"><span class="big" id="finalScore">0</span><span class="of" id="finalOf">/ 10</span></div>
+      <div class="stats">
+        <span class="stat"><span data-i18n="timeLabel">Time</span> <b id="finalTime">0:00</b></span>
+        <span class="stat board" id="boardStat" hidden><span id="boardText"></span></span>
+      </div>
       <h2 class="rank" id="rank" tabindex="-1">Keep Learning</h2>
       <p class="lede" id="rankMsg"></p>
     </div>
@@ -305,6 +317,9 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       inDesc: 'Things that are safe in the MRI room',
       outSub: 'Stays outside the room', tellSub: 'The team checks it first', inSub: 'Safe in the room',
       nameLabel: 'Your name for the certificate', namePh: 'Write your name', nameError: 'Please write your name to start.',
+      privacy: 'Your name stays on your device. We record anonymous results (score, time, answers and language) for event statistics and the player ranking.',
+      timerNote: 'The clock only runs while you choose. Reading the answers is not timed.',
+      timeLabel: 'Time', rankLine: 'Your rank: {r} / {n}', rankPending: 'Working out your rank…',
       start: 'Start the game', fs: 'Full screen', fsExit: 'Exit full screen',
       rounds: 'Rounds played on this device: {n}',
       count: 'Item {i} of {n}', score: 'Score', ask: 'Where does it go?', choose: 'Choose where it goes',
@@ -325,7 +340,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       c_title: 'MRI SAFETY CERTIFICATE', c_awarded: 'This certificate is awarded to',
       c_line1: 'for completing the Safe or Not Safe? MRI safety challenge',
       c_line2: 'on the International Day of Radiology 2026',
-      c_result: 'Result {s}/{n} · {rank}',
+      c_result: 'Result {s}/{n} · {time} · {rank}',
       c_dept: 'Medical Imaging Department', c_hosp: 'King Abdullah Specialized Hospital · MNGHA',
       c_date: 'Date', c_tags: '#IDoR2026 · #RespectTheField'
     },
@@ -340,6 +355,9 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       inDesc: 'أشياء آمنة داخل غرفة الرنين المغناطيسي',
       outSub: 'يبقى خارج الغرفة', tellSub: 'يتحقق منه الفريق أولًا', inSub: 'آمن داخل الغرفة',
       nameLabel: 'اسمك كما سيظهر في الشهادة', namePh: 'اكتب اسمك', nameError: 'فضلًا اكتب اسمك للبدء.',
+      privacy: 'يبقى اسمك على جهازك فقط. نسجّل النتائج دون أي بيانات شخصية (الدرجة والوقت والإجابات واللغة) لأغراض إحصائية ولترتيب المشاركين.',
+      timerNote: 'يعمل المؤقت أثناء اختيارك للإجابة فقط، ولا يُحتسب وقت قراءة الشرح.',
+      timeLabel: 'الوقت', rankLine: 'ترتيبك: {r} من {n}', rankPending: 'جارٍ حساب ترتيبك…',
       start: 'ابدأ اللعبة', fs: 'ملء الشاشة', fsExit: 'الخروج من ملء الشاشة',
       rounds: 'عدد الجولات على هذا الجهاز: {n}',
       count: 'العنصر {i} من {n}', score: 'النتيجة', ask: 'أين مكانه؟', choose: 'اختر مكانه',
@@ -360,7 +378,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       c_title: 'شهادة السلامة في الرنين المغناطيسي', c_awarded: 'تُمنح هذه الشهادة إلى',
       c_line1: 'تقديرًا لإتمام تحدي «آمن أم غير آمن؟» للسلامة في الرنين المغناطيسي',
       c_line2: 'بمناسبة اليوم العالمي للأشعة 2026',
-      c_result: 'النتيجة {s}/{n} · {rank}',
+      c_result: 'النتيجة {s}/{n} · {time} · {rank}',
       c_dept: 'إدارة التصوير الطبي', c_hosp: 'مستشفى الملك عبدالله التخصصي · الشؤون الصحية بوزارة الحرس الوطني',
       c_date: 'التاريخ', c_tags: '#IDoR2026 · #RespectTheField'
     }
@@ -502,6 +520,10 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     { min: 0, title: { en: 'Keep Learning', ar: 'واصل التعلّم' },
       msg: { en: 'The magnet surprises many people. Read the answers below, then try another round.', ar: 'المغناطيس يفاجئ كثيرًا من الناس. اقرأ الإجابات أدناه، ثم جرّب جولة أخرى.' } }
   ];
+  /* Anonymous results: the Google Apps Script web app address (ends in /exec). Leave empty to record nothing.
+     Only score, rank, language and missed item ids are sent; never the player's name. */
+  var RESULTS_URL = '';
+  var RECORDING = !!RESULTS_URL && !(window.claude && typeof window.claude.use === 'function');
   var END_IDLE = 90;
   var PLAY_IDLE = 120;
   var ROUNDS_KEY = 'idor2026-safe-or-not-rounds';
@@ -518,7 +540,71 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
   }
   var lang = storedLang();
 
-  function fresh() { return { screen: 'start', name: '', round: [], i: 0, score: 0, results: [], dateISO: '' }; }
+  function fresh() {
+    return { screen: 'start', name: '', round: [], i: 0, score: 0, results: [], dateISO: '', sent: false,
+      elapsedMs: 0, itemStart: null, board: null, boardPending: false };
+  }
+
+  /* Answer time only: the clock runs while an item waits for an answer and pauses while the explanation is read */
+  function currentMs() {
+    return state.elapsedMs + (state.itemStart != null ? Date.now() - state.itemStart : 0);
+  }
+  function fmtTime(ms) {
+    var total = Math.max(0, Math.floor(ms / 1000));
+    var m = Math.floor(total / 60), s = total % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function updateTimer() {
+    var el = document.getElementById('timeText');
+    if (el) el.textContent = fmtTime(currentMs());
+  }
+
+  /* Sends one anonymous row; the results sheet answers with this player's position among everyone so far */
+  function sendResult() {
+    if (!RECORDING || state.sent) return;
+    state.sent = true;
+    state.boardPending = true;
+    renderBoard();
+    var payload = JSON.stringify({
+      app: 'idor2026-safe-or-not',
+      score: state.score,
+      total: state.round.length,
+      timeMs: Math.round(state.elapsedMs),
+      rank: rankFor(state.score).title.en,
+      lang: lang,
+      missed: state.results.filter(function (r) { return r && !r.ok; }).map(function (r) { return r.id; })
+    });
+    var my = state;
+    function done(board) {
+      if (state !== my) return;
+      state.boardPending = false;
+      state.board = board;
+      renderBoard();
+    }
+    try {
+      fetch(RESULTS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var rank = d && Number(d.rank), total = d && Number(d.total);
+          done(d && d.ok && rank >= 1 && total >= rank ? { rank: rank, total: total } : null);
+        })
+        .catch(function () { done(null); });
+    } catch (e) { done(null); }
+  }
+
+  function renderBoard() {
+    var stat = document.getElementById('boardStat');
+    if (!stat) return;
+    if (state.board) {
+      stat.hidden = false;
+      $('boardText').textContent = t('rankLine', { r: state.board.rank, n: state.board.total });
+    } else if (state.boardPending) {
+      stat.hidden = false;
+      $('boardText').textContent = t('rankPending');
+    } else {
+      stat.hidden = true;
+    }
+  }
   var state = fresh();
 
   function t(key, vars) {
@@ -631,7 +717,9 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       $('choices').hidden = false;
       $('ask').hidden = false;
       $('feedback').hidden = true;
+      if (state.itemStart == null) state.itemStart = Date.now();
     }
+    updateTimer();
   }
 
   function showFeedback(item, pick, animate) {
@@ -666,6 +754,11 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
 
   function choose(pick) {
     if (state.screen !== 'play' || state.results[state.i]) return;
+    if (state.itemStart != null) {
+      state.elapsedMs += Date.now() - state.itemStart;
+      state.itemStart = null;
+    }
+    updateTimer();
     var item = BY_ID[state.round[state.i]];
     var ok = pick === item.a;
     if (ok) state.score += 1;
@@ -823,7 +916,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     ctx.fillText(L.c_line2, cx, 708);
 
     // Result pill
-    var res = L.c_result.replace('{s}', d.score).replace('{n}', d.total).replace('{rank}', d.rank);
+    var res = L.c_result.replace('{s}', d.score).replace('{n}', d.total).replace('{time}', d.time).replace('{rank}', d.rank);
     setFont(ctx, 700, 32, 'body', ar);
     var pw = Math.min(ctx.measureText(res).width + 96, CW - 300), ph = 76, py = 766;
     ctx.fillStyle = CC.navy; roundRect(ctx, cx - pw / 2, py, pw, ph, 38); ctx.fill();
@@ -872,7 +965,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       var rank = rankFor(state.score);
       try {
         drawCertificate(canvas, {
-          name: state.name, score: state.score, total: state.round.length,
+          name: state.name, score: state.score, total: state.round.length, time: fmtTime(state.elapsedMs),
           rank: rank.title[lang], lang: lang, dateISO: state.dateISO
         });
         lastCanvas = canvas;
@@ -939,6 +1032,8 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     var n = state.round.length;
     $('finalScore').textContent = s;
     $('finalOf').textContent = '/ ' + n;
+    $('finalTime').textContent = fmtTime(state.elapsedMs);
+    renderBoard();
     var rank = rankFor(s);
     $('rank').textContent = rank.title[lang];
     $('rankMsg').textContent = rank.msg[lang];
@@ -970,6 +1065,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     show('end');
     renderEnd();
     bumpRounds();
+    sendResult();
     touch();
     $('rank').focus({ preventScroll: true });
     try { window.scrollTo({ top: 0 }); } catch (e) {}
@@ -1045,6 +1141,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
   }
 
   /* ---------- Kiosk helpers ---------- */
+  setInterval(function () { if (state.screen === 'play') updateTimer(); }, 250);
   var last = Date.now();
   function touch() { last = Date.now(); }
   ['pointerdown', 'keydown'].forEach(function (ev) { document.addEventListener(ev, touch, { passive: true }); });
@@ -1107,6 +1204,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       if (typeof state.name !== 'string') state.name = '';
       $('playerName').value = state.name;
     }
+    $('privacyNote').hidden = !RECORDING;
     show(state.screen);
     applyLang();
   }
