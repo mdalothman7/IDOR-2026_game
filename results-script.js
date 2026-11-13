@@ -1,6 +1,5 @@
 /**
  * IDoR 2026 · "Safe or Not Safe?" MRI safety game — anonymous results and player ranking
- * Medical Imaging Department, King Abdullah Specialized Hospital
  *
  * Paste this into Extensions → Apps Script of your results Google Sheet (replace everything in Code.gs).
  * The game sends one row per finished round and gets back the player's position, e.g. 2 of 30.
