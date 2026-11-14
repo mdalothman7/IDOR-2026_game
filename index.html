@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Safe or Not Safe? A free MRI safety game for the International Day of Radiology 2026, in English and Arabic.">
+<meta name="description" content="Safe or Not Safe? A free MRI safety game in English and Arabic.">
 <title>MRI Safe or Not Safe</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&amp;family=IBM+Plex+Mono:wght@500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;family=Noto+Kufi+Arabic:wght@500..900&amp;display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -189,7 +189,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
 <body>
 <div class="app">
   <header class="bar">
-    <span class="brand" data-i18n="brand">IDoR 2026 · Respect the Field</span>
+    <span class="brand" data-i18n="brand">MRI Safety · Respect the Field</span>
     <div class="bar-end">
       <span class="status"><span class="dot" aria-hidden="true"></span><span data-i18n="status">MAGNET ON · 24/7</span></span>
       <button type="button" class="lang-btn" id="langBtn" lang="ar">العربية</button>
@@ -294,8 +294,8 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
   </section>
 
   <footer class="foot">
-    <span data-i18n="foot1">MRI safety awareness · International Day of Radiology 2026</span>
-    <span data-i18n="foot2">#IDoR2026 · #RespectTheField</span>
+    <span data-i18n="foot1">Safe or Not Safe? · MRI safety awareness game</span>
+    <span data-i18n="foot2">#MRISafety · #RespectTheField</span>
   </footer>
 </div>
 
@@ -306,7 +306,7 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
   var T = {
     en: {
       dir: 'ltr', langBtn: 'العربية', otherLang: 'ar',
-      brand: 'IDoR 2026 · Respect the Field', status: 'MAGNET ON · 24/7',
+      brand: 'MRI Safety · Respect the Field', status: 'MAGNET ON · 24/7',
       eyebrow: 'MRI safety game', titleA: 'Safe or', titleB: 'Not Safe?',
       lede: 'Imagine you are going into the MRI room for a scan, or to stay with a family member. What can come in with you? Sort 10 things into the right group.',
       out: 'Leave it out', tell: 'Tell the staff', in: 'OK to go in',
@@ -332,18 +332,16 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       saveFail: 'The certificate could not be saved here. Take a photo of it instead.',
       certHint: 'Take a photo of your certificate, or press and hold it to save it on your phone.',
       missesHead: 'Answers to remember', again: 'Play again', idle: 'Back to the start screen in {n} s',
-      foot1: 'MRI safety awareness · International Day of Radiology 2026', foot2: '#IDoR2026 · #RespectTheField',
-      c_kicker: 'IDoR 2026 · INTERNATIONAL DAY OF RADIOLOGY', c_slogan: 'RESPECT THE FIELD',
+      foot1: 'Safe or Not Safe? · MRI safety awareness game', foot2: '#MRISafety · #RespectTheField',
+      c_kicker: 'MRI SAFETY AWARENESS', c_slogan: 'RESPECT THE FIELD',
       c_title: 'MRI SAFETY CERTIFICATE', c_awarded: 'This certificate is awarded to',
       c_line1: 'for completing the Safe or Not Safe? MRI safety challenge',
-      c_line2: 'on the International Day of Radiology 2026',
       c_result: 'Result {s}/{n}',
-      c_dept: 'Safe or Not Safe?', c_hosp: 'MRI safety awareness game',
-      c_date: 'Date', c_tags: '#IDoR2026 · #RespectTheField'
+      c_date: 'Date', c_tags: '#MRISafety · #RespectTheField'
     },
     ar: {
       dir: 'rtl', langBtn: 'English', otherLang: 'en',
-      brand: 'اليوم العالمي للأشعة 2026 · احترم المجال المغناطيسي', status: 'المغناطيس يعمل دائمًا · 24/7',
+      brand: 'السلامة في الرنين المغناطيسي · احترم المجال المغناطيسي', status: 'المغناطيس يعمل دائمًا · 24/7',
       eyebrow: 'لعبة السلامة في الرنين المغناطيسي', titleA: 'آمن أم', titleB: 'غير آمن؟',
       lede: 'تخيّل أنك ستدخل غرفة الرنين المغناطيسي لإجراء فحص، أو لمرافقة أحد أفراد أسرتك. ما الذي يمكن أن يدخل معك؟ صنّف 10 أشياء في المجموعة الصحيحة.',
       out: 'اتركه خارجًا', tell: 'أخبر الفريق', in: 'يمكن إدخاله',
@@ -369,14 +367,12 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
       saveFail: 'تعذّر حفظ الشهادة هنا. يمكنك تصويرها بدلًا من ذلك.',
       certHint: 'صوّر شهادتك، أو اضغط عليها مطولًا لحفظها في جوالك.',
       missesHead: 'إجابات تستحق التذكّر', again: 'العب مرة أخرى', idle: 'العودة إلى البداية خلال {n} ثانية',
-      foot1: 'التوعية بالسلامة في الرنين المغناطيسي · اليوم العالمي للأشعة 2026', foot2: '#IDoR2026 · #RespectTheField',
-      c_kicker: 'اليوم العالمي للأشعة 2026', c_slogan: 'احترم المجال المغناطيسي',
+      foot1: 'آمن أم غير آمن؟ · لعبة التوعية بالسلامة في الرنين المغناطيسي', foot2: '#MRISafety · #RespectTheField',
+      c_kicker: 'التوعية بالسلامة في الرنين المغناطيسي', c_slogan: 'احترم المجال المغناطيسي',
       c_title: 'شهادة السلامة في الرنين المغناطيسي', c_awarded: 'تُمنح هذه الشهادة إلى',
       c_line1: 'تقديرًا لإتمام تحدي «آمن أم غير آمن؟» للسلامة في الرنين المغناطيسي',
-      c_line2: 'بمناسبة اليوم العالمي للأشعة 2026',
       c_result: 'النتيجة {s}/{n}',
-      c_dept: 'آمن أم غير آمن؟', c_hosp: 'لعبة التوعية بالسلامة في الرنين المغناطيسي',
-      c_date: 'التاريخ', c_tags: '#IDoR2026 · #RespectTheField'
+      c_date: 'التاريخ', c_tags: '#MRISafety · #RespectTheField'
     }
   };
 
@@ -907,33 +903,40 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
 
     ctx.fillStyle = CC.ink;
     fitFont(ctx, L.c_line1, 500, 30, 20, 'body', ar, CW - 280);
-    ctx.fillText(L.c_line1, cx, 660);
-    setFont(ctx, 500, 30, 'body', ar);
-    ctx.fillText(L.c_line2, cx, 708);
+    ctx.fillText(L.c_line1, cx, 668);
 
     // Result pill
     var res = L.c_result.replace('{s}', d.score).replace('{n}', d.total).replace('{time}', d.time).replace('{rank}', d.rank);
     setFont(ctx, 700, 32, 'body', ar);
-    var pw = Math.min(ctx.measureText(res).width + 96, CW - 300), ph = 76, py = 766;
+    var pw = Math.min(ctx.measureText(res).width + 96, CW - 300), ph = 76, py = 724;
     ctx.fillStyle = CC.navy; roundRect(ctx, cx - pw / 2, py, pw, ph, 38); ctx.fill();
     ctx.fillStyle = CC.white; ctx.textBaseline = 'middle';
     fitFont(ctx, res, 700, 32, 20, 'body', ar, pw - 60);
     ctx.fillText(res, cx, py + ph / 2 + 2);
     ctx.textBaseline = 'alphabetic';
 
-    // Footer: department (start side), date (end side), label shapes (centre)
+    // Footer: signature block (start side, always in English), date (end side), label shapes (centre)
     var sx = ar ? CW - 130 : 130, ex = ar ? 130 : CW - 130;
+    var lineW = 420;
     ctx.strokeStyle = CC.rule; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(sx, 912); ctx.lineTo(ar ? sx - 470 : sx + 470, 912); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sx, 912); ctx.lineTo(ar ? sx - lineW : sx + lineW, 912); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(ex, 912); ctx.lineTo(ar ? ex + 300 : ex - 300, 912); ctx.stroke();
 
+    if (d.sig && d.sig.width && d.sig.height) {
+      var sc = Math.min(lineW / d.sig.width, 118 / d.sig.height);
+      var dw = d.sig.width * sc, dh = d.sig.height * sc;
+      ctx.drawImage(d.sig, ar ? sx - dw : sx, 904 - dh, dw, dh);
+    }
+
+    ctx.direction = 'ltr';
     ctx.textAlign = ar ? 'right' : 'left';
     ctx.fillStyle = CC.navy;
-    setFont(ctx, 700, 28, 'body', ar);
-    ctx.fillText(L.c_dept, sx, 958);
+    setFont(ctx, 700, 28, 'body', false);
+    ctx.fillText(SIGNER.name, sx, 958);
     ctx.fillStyle = CC.muted;
-    fitFont(ctx, L.c_hosp, 500, 22, 14, 'body', ar, 520);
-    ctx.fillText(L.c_hosp, sx, 996);
+    setFont(ctx, 600, 22, 'body', false);
+    ctx.fillText(SIGNER.title, sx, 996);
+    ctx.direction = ar ? 'rtl' : 'ltr';
 
     ctx.textAlign = ar ? 'left' : 'right';
     ctx.fillStyle = CC.muted;
@@ -952,17 +955,34 @@ html[dir="rtl"] .final{direction:ltr;justify-content:flex-end}
     ctx.fillText(L.c_tags, cx, 1066);
   }
 
+  /* Signer shown on every certificate, in English in both language versions */
+  var SIGNER = { name: 'Mohammed Al-Othman', title: 'MRSO' };
+  var SIG_SRC = ''; /* transparent PNG of the signature as a data: URI; empty = no signature drawn */
+  var sigReady = null;
+  function loadSignature() {
+    if (sigReady) return sigReady;
+    sigReady = new Promise(function (resolve) {
+      if (!SIG_SRC) { resolve(null); return; }
+      var im = new Image();
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { resolve(null); };
+      im.src = SIG_SRC;
+    });
+    return sigReady;
+  }
+
   function renderCertificate() {
     var my = ++certToken;
     var img = $('certImg');
-    loadFonts().then(function () {
+    Promise.all([loadFonts(), loadSignature()]).then(function (res) {
+      var sig = res[1];
       if (my !== certToken || state.screen !== 'end') return;
       var canvas = document.createElement('canvas');
       var rank = rankFor(state.score);
       try {
         drawCertificate(canvas, {
           name: state.name, score: state.score, total: state.round.length, time: fmtTime(state.elapsedMs),
-          rank: rank.title[lang], lang: lang, dateISO: state.dateISO
+          rank: rank.title[lang], lang: lang, dateISO: state.dateISO, sig: sig
         });
         lastCanvas = canvas;
         img.src = canvas.toDataURL('image/png');
